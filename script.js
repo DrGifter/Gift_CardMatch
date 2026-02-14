@@ -30,7 +30,7 @@ let currentLevel = 1;
 const availableTopics = [
     { name: "Gavv", iconCount: 16, level1Count: 10, level2Count: 17 },
     { name: "Kingohger", iconCount: 11, level1Count: 12, level2Count: 17 },
-    { name: "Zeztz", iconCount: 14, level1Count: 10, level2Count: 21 },
+    { name: "Zeztz", iconCount: 14, level1Count: 10, level2Count: 23 },
 ];
 
 const playlist = [
