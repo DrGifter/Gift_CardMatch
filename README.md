@@ -1,6 +1,6 @@
 # Card Matching Game 
 
-<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/3ed0fafe-a3cf-493d-af93-863b6e5e62f1" />
+![CardMatching](https://github.com/user-attachments/assets/e227528f-a60a-43fa-b51a-224e401de09e)
 
 ---
 >Nếu cảm thấy thích thú, bạn có thể ủng hộ mình thông qua tài khoản này, để mình có thêm động lực tạo ra nhiều thứ hay hơn
