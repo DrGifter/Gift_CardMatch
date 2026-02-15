@@ -28,9 +28,9 @@ let currentTopic = "Gavv";
 let currentLevel = 1;
 
 const availableTopics = [
-    { name: "Gavv", iconCount: 16, level1Count: 10, level2Count: 17 },
-    { name: "Kingohger", iconCount: 11, level1Count: 12, level2Count: 17 },
-    { name: "Zeztz", iconCount: 14, level1Count: 10, level2Count: 23 },
+    { name: "Gavv", iconCount: 16, level1Count: 10, level2Count: 17, logo: "asset/logo/Gavv.png" },
+    { name: "Kingohger", iconCount: 11, level1Count: 12, level2Count: 17, logo: "asset/logo/Kingohger.png" },
+    { name: "Zeztz", iconCount: 14, level1Count: 10, level2Count: 23, logo: "asset/logo/Zeztz.png" },
 ];
 
 const playlist = [
@@ -67,6 +67,9 @@ function renderTopics() {
         item.className = "topic-item";
         item.innerHTML = `
                 <input type="radio" name="game-topic" value="${topic.name}" ${topic.name === currentTopic ? "checked" : ""} onchange="selectTopic('${topic.name}')">
+                <div class="topic-logo-wrapper">
+                    <img src="${topic.logo}" alt="${topic.name} logo" class="topic-logo">
+                </div>
                 <span>${topic.name}</span>
             `;
         topicContainer.appendChild(item);
@@ -133,6 +136,11 @@ function startGame(level) {
     score = 100;
     timeLeft = level === 1 ? 120 : 60;
     totalInitialTime = timeLeft;
+
+    // Set Topic Logo in board background
+    const topicData = availableTopics.find(t => t.name === currentTopic);
+    document.getElementById("board-logo-bg").src = topicData.logo;
+
     updateUI();
 
     // UI Switch
@@ -194,7 +202,7 @@ function startTimer() {
         timeLeft--;
         updateUI();
         if (timeLeft <= 0) {
-            gameOver(false);
+            gameOver("timeout");
         }
     }, 1000);
 }
@@ -218,7 +226,7 @@ function updateScore(delta) {
     if (score <= 0) {
         score = 0;
         scoreVal.innerText = score;
-        gameOver(false); // Fail if score is 0
+        gameOver("no-score"); // Fail if score is 0
         return;
     }
 
@@ -344,7 +352,7 @@ function checkMatch() {
             isTransitioning = false;
 
             if (matchedPairs === totalPairs) {
-                gameOver(true); // Victory
+                gameOver("complete"); // Victory
             }
         }, 600);
     } else {
@@ -412,25 +420,50 @@ function shuffleRemainingCards() {
     playSFX(sfxSwap);
 }
 
-function gameOver(isWin) {
+function gameOver(reason) {
     clearInterval(gameTimer);
     isGameRunning = false;
-    const finalSuccess = isWin && score >= 50;
 
-    if (finalSuccess) {
+    let title = "Thất Bại";
+    let isSuccess = false;
+
+    if (reason === "complete") {
+        if (score >= 50) {
+            title = "Thành Công";
+            isSuccess = true;
+        } else {
+            title = "Điểm dưới 50";
+            isSuccess = false;
+        }
+    } else if (reason === "timeout") {
+        title = "Hết thời gian";
+        isSuccess = false;
+    } else if (reason === "no-score") {
+        title = "Hết điểm";
+        isSuccess = false;
+    } else if (reason === "quit") {
+        title = "Bỏ cuộc";
+        isSuccess = false;
+    }
+
+    if (isSuccess) {
         playSFX(sfxWin);
     } else {
         playSFX(sfxFail);
     }
 
-    modalTitle.innerText = finalSuccess ? "Thành Công" : "Thất Bại";
-    modalTitle.className = "modal-title " + (finalSuccess ? "success" : "failure");
+    modalTitle.innerText = title;
+    modalTitle.className = "modal-title " + (isSuccess ? "success" : "failure");
     finalScoreVal.innerText = score;
+
+    // Set Result Topic Logo
+    const topicData = availableTopics.find(t => t.name === currentTopic);
+    document.getElementById("result-topic-logo").src = topicData.logo;
 
     const modalButtons = document.getElementById("modal-buttons-container");
     modalButtons.innerHTML = "";
 
-    if (finalSuccess) {
+    if (isSuccess) {
         if (currentLevel === 1) {
             modalButtons.innerHTML = `
             <button class="btn" onclick="startGame(1)">Replay</button>
@@ -478,6 +511,14 @@ function resumeGame() {
 }
 
 function exitGame() {
+    if (isGameRunning || isPaused) {
+        // If exiting while game is running/paused, count as failure
+        isGameRunning = false;
+        isPaused = false;
+        gameOver("quit");
+        return;
+    }
+
     clearInterval(gameTimer);
     if (backgroundInterval) {
         clearInterval(backgroundInterval);
@@ -603,7 +644,7 @@ function renderPlaylist() {
 
         let icon = "";
         if (currentTrackIndex === index) {
-            icon = isMusicPlaying ? '<span class="music-icon">▶</span>' : '<span class="music-icon">⏸</span>';
+            icon = isMusicPlaying ? '<span class="music-icon"><i class="fa-solid fa-play"></i></span>' : '<span class="music-icon"><i class="fa-solid fa-pause"></i></span>';
         }
 
         item.innerHTML = `
