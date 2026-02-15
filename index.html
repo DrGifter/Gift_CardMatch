@@ -8,6 +8,7 @@
   <link rel="icon" type="image/png"
     href="https://res.cloudinary.com/dmrdg40kx/image/upload/v1771034619/Logo_urvu0r.png" />
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.2.0/css/all.css" />
 </head>
 
 <body>
@@ -97,7 +98,10 @@
       </div>
     </div>
 
-    <div class="game-board" id="game-board"></div>
+    <div class="game-board-wrapper">
+      <img src="" id="board-logo-bg" class="board-watermark" alt="topic logo bg">
+      <div class="game-board" id="game-board"></div>
+    </div>
     <button class="btn" id="pause-btn" onclick="pauseGame()" style="margin-top: 20px">
       Pause Game
     </button>
@@ -122,6 +126,7 @@
   <div class="modal-overlay" id="result-modal">
     <div class="modal-content">
       <h2 class="modal-title" id="modal-title">Success</h2>
+      <img src="" id="result-topic-logo" alt="topic logo" style="width: 120px; height: auto; margin-bottom: 20px;">
       <p class="modal-score">
         Final Score: <span id="final-score-val">100</span>
       </p>
